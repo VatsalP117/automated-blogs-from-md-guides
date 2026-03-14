@@ -1,6 +1,7 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import { loadSiteContent } from "@/lib/content/load-site";
+import { withBase } from "@/lib/paths";
 import Layout from "@/layouts/Layout.astro";
 import type { ContentCollection, ContentEntry, ContentItem } from "@/lib/content/types";
 
@@ -42,9 +43,9 @@ const nextEntry = currentIndex < item.entries.length - 1 ? item.entries[currentI
 	<div class="route-shell">
 		<Breadcrumbs
 			items={[
-				{ label: "Home", href: "/" },
-				{ label: collection.title, href: `/${collection.route}/` },
-				{ label: item.title, href: `/${collection.route}/${item.slug}/` },
+				{ label: "Home", href: withBase() },
+				{ label: collection.title, href: withBase(`${collection.route}/`) },
+				{ label: item.title, href: withBase(`${collection.route}/${item.slug}/`) },
 				{ label: entry.title },
 			]}
 		/>
@@ -66,7 +67,7 @@ const nextEntry = currentIndex < item.entries.length - 1 ? item.entries[currentI
 
 		<section class="nav-links">
 			{previousEntry ? (
-				<a href={`/${collection.route}/${item.slug}/${previousEntry.slug}/`}>
+				<a href={withBase(`${collection.route}/${item.slug}/${previousEntry.slug}/`)}>
 					<div class="muted">Previous</div>
 					<strong>{previousEntry.title}</strong>
 				</a>
@@ -74,7 +75,7 @@ const nextEntry = currentIndex < item.entries.length - 1 ? item.entries[currentI
 				<div />
 			)}
 			{nextEntry ? (
-				<a href={`/${collection.route}/${item.slug}/${nextEntry.slug}/`}>
+				<a href={withBase(`${collection.route}/${item.slug}/${nextEntry.slug}/`)}>
 					<div class="muted">Next</div>
 					<strong>{nextEntry.title}</strong>
 				</a>

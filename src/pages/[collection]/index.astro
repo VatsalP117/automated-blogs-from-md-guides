@@ -2,6 +2,7 @@
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import CollectionCard from "@/components/CollectionCard.astro";
 import { loadSiteContent } from "@/lib/content/load-site";
+import { withBase } from "@/lib/paths";
 import Layout from "@/layouts/Layout.astro";
 import type { ContentCollection } from "@/lib/content/types";
 
@@ -23,7 +24,7 @@ const { collection } = Astro.props as { collection: ContentCollection };
 
 <Layout title={collection.title} description={collection.description}>
 	<div class="route-shell">
-		<Breadcrumbs items={[{ label: "Home", href: "/" }, { label: collection.title }]} />
+		<Breadcrumbs items={[{ label: "Home", href: withBase() }, { label: collection.title }]} />
 
 		<section class="panel hero-panel">
 			<span class="eyebrow">{collection.typeLabel} collection</span>
@@ -43,7 +44,7 @@ const { collection } = Astro.props as { collection: ContentCollection };
 		<section class="section-grid">
 			{collection.items.map((item) => (
 				<CollectionCard
-					href={`/${collection.route}/${item.slug}/`}
+					href={withBase(`${collection.route}/${item.slug}/`)}
 					title={item.title}
 					description={item.description}
 					badges={[

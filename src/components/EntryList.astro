@@ -1,5 +1,6 @@
 ---
 import type { ContentItem } from "@/lib/content/types";
+import { withBase } from "@/lib/paths";
 
 interface Props {
 	item: ContentItem;
@@ -10,7 +11,7 @@ const { item } = Astro.props;
 
 <div class="entry-list">
 	{item.entries.map((entry) => (
-		<a href={`/${item.collectionRoute}/${item.slug}/${entry.slug}/`}>
+		<a href={withBase(`${item.collectionRoute}/${item.slug}/${entry.slug}/`)}>
 			<span class="entry-index">Part {entry.order}</span>
 			<strong>{entry.title}</strong>
 			<span class="muted">{entry.description}</span>

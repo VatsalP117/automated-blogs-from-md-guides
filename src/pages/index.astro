@@ -1,6 +1,7 @@
 ---
 import CollectionCard from '@/components/CollectionCard.astro';
 import { loadSiteContent } from '@/lib/content/load-site';
+import { withBase } from '@/lib/paths';
 import Layout from '@/layouts/Layout.astro';
 
 const site = await loadSiteContent();
@@ -31,7 +32,7 @@ const site = await loadSiteContent();
 		<div class="section-grid">
 			{site.collections.map((collection) => (
 				<CollectionCard
-					href={`/${collection.route}/`}
+					href={withBase(`${collection.route}/`)}
 					title={collection.title}
 					description={collection.description}
 					badges={[
