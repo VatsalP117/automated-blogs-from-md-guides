@@ -1,0 +1,22 @@
+---
+interface Props {
+	href: string;
+	title: string;
+	description: string;
+	badges: string[];
+	linkLabel?: string;
+}
+
+const { href, title, description, badges, linkLabel = "Open" } = Astro.props;
+---
+
+<a class="card" href={href}>
+	<div class="badge-row">
+		{badges.map((badge, index) => (
+			<span class:list={["badge", index === 0 && "badge--accent"]}>{badge}</span>
+		))}
+	</div>
+	<h3>{title}</h3>
+	<p>{description}</p>
+	<span class="card-link">{linkLabel} ↗</span>
+</a>

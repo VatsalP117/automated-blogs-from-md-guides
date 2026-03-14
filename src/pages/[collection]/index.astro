@@ -1,0 +1,59 @@
+---
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import CollectionCard from "@/components/CollectionCard.astro";
+import { loadSiteContent } from "@/lib/content/load-site";
+import Layout from "@/layouts/Layout.astro";
+import type { ContentCollection } from "@/lib/content/types";
+
+export async function getStaticPaths() {
+	const site = await loadSiteContent();
+
+	return site.collections.map((collection) => ({
+		params: {
+			collection: collection.route,
+		},
+		props: {
+			collection,
+		},
+	}));
+}
+
+const { collection } = Astro.props as { collection: ContentCollection };
+---
+
+<Layout title={collection.title} description={collection.description}>
+	<div class="route-shell">
+		<Breadcrumbs items={[{ label: "Home", href: "/" }, { label: collection.title }]} />
+
+		<section class="panel hero-panel">
+			<span class="eyebrow">{collection.typeLabel} collection</span>
+			<h1>{collection.title}</h1>
+			<p class="lead">{collection.description}</p>
+			<div class="meta-row">
+				<span class="badge badge--accent">
+					{collection.itemCount} item{collection.itemCount === 1 ? "" : "s"}
+				</span>
+				<span class="badge">
+					{collection.entryCount} source file{collection.entryCount === 1 ? "" : "s"}
+				</span>
+				<span class="badge">{collection.defaultViewMode}</span>
+			</div>
+		</section>
+
+		<section class="section-grid">
+			{collection.items.map((item) => (
+				<CollectionCard
+					href={`/${collection.route}/${item.slug}/`}
+					title={item.title}
+					description={item.description}
+					badges={[
+						item.viewMode,
+						`${item.entries.length} part${item.entries.length === 1 ? "" : "s"}`,
+						`${item.readingMinutes} min read`,
+					]}
+					linkLabel="Open item"
+				/>
+			))}
+		</section>
+	</div>
+</Layout>

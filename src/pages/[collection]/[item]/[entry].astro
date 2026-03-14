@@ -1,0 +1,86 @@
+---
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { loadSiteContent } from "@/lib/content/load-site";
+import Layout from "@/layouts/Layout.astro";
+import type { ContentCollection, ContentEntry, ContentItem } from "@/lib/content/types";
+
+export async function getStaticPaths() {
+	const site = await loadSiteContent();
+
+	return site.collections.flatMap((collection) =>
+		collection.items
+			.filter((item) => item.viewMode !== "merged")
+			.flatMap((item) =>
+				item.entries.map((entry) => ({
+					params: {
+						collection: collection.route,
+						item: item.slug,
+						entry: entry.slug,
+					},
+					props: {
+						collection,
+						item,
+						entry,
+					},
+				})),
+			),
+	);
+}
+
+const { collection, item, entry } = Astro.props as {
+	collection: ContentCollection;
+	item: ContentItem;
+	entry: ContentEntry;
+};
+
+const currentIndex = item.entries.findIndex((candidate) => candidate.slug === entry.slug);
+const previousEntry = currentIndex > 0 ? item.entries[currentIndex - 1] : undefined;
+const nextEntry = currentIndex < item.entries.length - 1 ? item.entries[currentIndex + 1] : undefined;
+---
+
+<Layout title={`${item.title}: ${entry.title}`} description={entry.description}>
+	<div class="route-shell">
+		<Breadcrumbs
+			items={[
+				{ label: "Home", href: "/" },
+				{ label: collection.title, href: `/${collection.route}/` },
+				{ label: item.title, href: `/${collection.route}/${item.slug}/` },
+				{ label: entry.title },
+			]}
+		/>
+
+		<section class="panel hero-panel">
+			<span class="eyebrow">Part {currentIndex + 1}</span>
+			<h1>{entry.title}</h1>
+			<p class="lead">{entry.description}</p>
+			<div class="meta-row">
+				<span class="badge badge--accent">{item.title}</span>
+				<span class="badge">{entry.readingMinutes} min read</span>
+				<span class="badge">{item.entries.length} total parts</span>
+			</div>
+		</section>
+
+		<section class="panel hero-panel">
+			<div class="prose" set:html={entry.html} />
+		</section>
+
+		<section class="nav-links">
+			{previousEntry ? (
+				<a href={`/${collection.route}/${item.slug}/${previousEntry.slug}/`}>
+					<div class="muted">Previous</div>
+					<strong>{previousEntry.title}</strong>
+				</a>
+			) : (
+				<div />
+			)}
+			{nextEntry ? (
+				<a href={`/${collection.route}/${item.slug}/${nextEntry.slug}/`}>
+					<div class="muted">Next</div>
+					<strong>{nextEntry.title}</strong>
+				</a>
+			) : (
+				<div />
+			)}
+		</section>
+	</div>
+</Layout>
