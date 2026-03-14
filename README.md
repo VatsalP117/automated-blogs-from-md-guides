@@ -16,7 +16,7 @@ This keeps v1 fast to ship while leaving room for notes, changelogs, case studie
 - Astro static site with direct deployment support
 - Config-driven content discovery via `autoblog.config.ts`
 - Markdown ingestion from repo folders using `gray-matter` and `marked`
-- Directory-level item metadata through `index.md` or `_index.md`
+- Directory-level item metadata through `README.md`, `index.md`, or `_index.md`
 - Collection pages, merged item pages, and per-entry pages
 - GitHub Pages deploy workflow
 - Pull request validation workflow
@@ -38,7 +38,7 @@ content/
 Rules:
 
 - Each folder under a collection source becomes one published item.
-- `index.md` or `_index.md` is optional item-level metadata and intro content.
+- `README.md`, `index.md`, or `_index.md` is optional item-level metadata and intro content.
 - Numbered filenames control order by default.
 - Frontmatter can override order with `order`.
 - Frontmatter can override route slugs with `slug`.

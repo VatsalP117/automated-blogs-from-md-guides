@@ -18,6 +18,8 @@ const ITEM_META_FILENAMES = new Set([
 	"index.markdown",
 	"_index.md",
 	"_index.markdown",
+	"readme.md",
+	"readme.markdown",
 ]);
 
 let siteCache: Promise<LoadedSite> | undefined;
@@ -88,7 +90,9 @@ async function loadDirectoryItem(
 		return undefined;
 	}
 
-	const metaPath = markdownFiles.find((filePath) => ITEM_META_FILENAMES.has(path.basename(filePath)));
+	const metaPath = markdownFiles.find((filePath) =>
+		ITEM_META_FILENAMES.has(path.basename(filePath).toLowerCase()),
+	);
 	const contentPaths =
 		markdownFiles.length === 1 && metaPath
 			? markdownFiles
@@ -211,9 +215,9 @@ function buildContentEntry(entry: ParsedMarkdownDocument, index: number): Conten
 function buildMergedHtml(entries: ContentEntry[]): string {
 	return entries
 		.map(
-			(entry, index) => `
+			(entry) => `
 				<section class="merged-section" id="${escapeHtml(entry.slug)}">
-					<p class="kicker">Part ${index + 1}</p>
+					<p class="kicker">Part ${entry.order}</p>
 					<h2>${escapeHtml(entry.title)}</h2>
 					${entry.html}
 				</section>
@@ -283,7 +287,7 @@ function stripLeadingHeading(content: string) {
 }
 
 function createExcerpt(content: string) {
-	const normalized = stripMarkdown(content)
+	const normalized = stripMarkdown(stripLeadingHeading(content))
 		.replace(/\s+/g, " ")
 		.trim();
 
@@ -315,7 +319,7 @@ function estimateReadingTime(content: string) {
 }
 
 function inferFilenameOrder(fileName: string) {
-	const match = fileName.match(/^(\d+)/);
+	const match = fileName.match(/^(?:part[-_ ]?)?(\d+)/i);
 	return match ? Number(match[1]) : undefined;
 }
 
@@ -323,6 +327,7 @@ function slugify(value: string) {
 	return value
 		.trim()
 		.toLowerCase()
+		.replace(/^part[-_ ]?\d+\s*[-_.]?\s*/i, "")
 		.replace(/^\d+\s*[-_.]?\s*/, "")
 		.replace(/[^a-z0-9]+/g, "-")
 		.replace(/^-+|-+$/g, "");
