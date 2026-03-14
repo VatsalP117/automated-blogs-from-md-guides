@@ -187,7 +187,7 @@ async function readMarkdownDocument(filePath: string): Promise<ParsedMarkdownDoc
 		slug,
 		title,
 		description,
-		html: marked.parse(normalizedContent) as string,
+		html: stripSourceMarkdownLinks(marked.parse(normalizedContent) as string),
 		raw: normalizedContent,
 		sourcePath: filePath,
 		frontmatter: parsed.data as Record<string, unknown>,
@@ -369,4 +369,11 @@ function escapeHtml(value: string) {
 		.replaceAll(">", "&gt;")
 		.replaceAll('"', "&quot;")
 		.replaceAll("'", "&#39;");
+}
+
+function stripSourceMarkdownLinks(html: string) {
+	return html.replace(
+		/<a\s+[^>]*href="[^"]+\.(?:md|markdown)(?:#[^"]*)?"[^>]*>(.*?)<\/a>/gi,
+		"$1",
+	);
 }
