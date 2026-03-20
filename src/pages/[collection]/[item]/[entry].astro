@@ -1,5 +1,6 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import SectionNotes from "@/components/SectionNotes.astro";
 import { loadSiteContent } from "@/lib/content/load-site";
 import { withBase } from "@/lib/paths";
 import Layout from "@/layouts/Layout.astro";
@@ -62,7 +63,12 @@ const nextEntry = currentIndex < item.entries.length - 1 ? item.entries[currentI
 		</section>
 
 		<section class="panel hero-panel">
-			<div class="prose" set:html={entry.html} />
+			<div
+				class="prose"
+				data-note-scope
+				data-note-page={`${collection.route}/${item.slug}/${entry.slug}`}
+				set:html={entry.html}
+			/>
 		</section>
 
 		<section class="nav-links">
@@ -84,4 +90,6 @@ const nextEntry = currentIndex < item.entries.length - 1 ? item.entries[currentI
 			)}
 		</section>
 	</div>
+
+	<SectionNotes />
 </Layout>

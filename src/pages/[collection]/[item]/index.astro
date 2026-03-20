@@ -1,6 +1,7 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import EntryList from "@/components/EntryList.astro";
+import SectionNotes from "@/components/SectionNotes.astro";
 import { loadSiteContent } from "@/lib/content/load-site";
 import { withBase } from "@/lib/paths";
 import Layout from "@/layouts/Layout.astro";
@@ -74,8 +75,15 @@ const { collection, item } = Astro.props as {
 					<span class="eyebrow">Merged article</span>
 					<h2 style="margin-top: 12px;">Read the whole item in one pass.</h2>
 				</div>
-				<div class="prose merged-stack" set:html={item.mergedHtml} />
+				<div
+					class="prose merged-stack"
+					data-note-scope
+					data-note-page={`${collection.route}/${item.slug}`}
+					set:html={item.mergedHtml}
+				/>
 			</section>
 		)}
 	</div>
+
+	<SectionNotes />
 </Layout>

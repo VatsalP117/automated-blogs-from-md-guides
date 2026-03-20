@@ -187,7 +187,7 @@ async function readMarkdownDocument(filePath: string): Promise<ParsedMarkdownDoc
 		slug,
 		title,
 		description,
-		html: stripSourceMarkdownLinks(marked.parse(normalizedContent) as string),
+		html: renderMarkdown(normalizedContent),
 		raw: normalizedContent,
 		sourcePath: filePath,
 		frontmatter: parsed.data as Record<string, unknown>,
@@ -216,10 +216,10 @@ function buildMergedHtml(entries: ContentEntry[]): string {
 	return entries
 		.map(
 			(entry) => `
-				<section class="merged-section" id="${escapeHtml(entry.slug)}">
+				<section class="merged-section" data-entry-slug="${escapeHtml(entry.slug)}">
 					<p class="kicker">Part ${entry.order}</p>
-					<h2>${escapeHtml(entry.title)}</h2>
-					${entry.html}
+					<h2 id="${escapeHtml(entry.slug)}">${escapeHtml(entry.title)}</h2>
+					${prefixFragmentIds(entry.html, entry.slug)}
 				</section>
 			`,
 		)
@@ -376,4 +376,44 @@ function stripSourceMarkdownLinks(html: string) {
 		/<a\s+[^>]*href="[^"]+\.(?:md|markdown)(?:#[^"]*)?"[^>]*>(.*?)<\/a>/gi,
 		"$1",
 	);
+}
+
+function renderMarkdown(content: string) {
+	const slugCounts = new Map<string, number>();
+	const renderer = new marked.Renderer();
+
+	renderer.heading = function heading(token) {
+		const text = token.text ?? this.parser.parseInline(token.tokens);
+		const innerHtml = this.parser.parseInline(token.tokens);
+		const id = uniqueHeadingSlug(text, slugCounts);
+
+		return `<h${token.depth} id="${escapeHtml(id)}">${innerHtml}</h${token.depth}>`;
+	};
+
+	return stripSourceMarkdownLinks(marked.parse(content, { gfm: true, renderer }) as string);
+}
+
+function uniqueHeadingSlug(value: string, slugCounts: Map<string, number>) {
+	const base = slugifyHeading(value) || "section";
+	const nextCount = (slugCounts.get(base) ?? 0) + 1;
+
+	slugCounts.set(base, nextCount);
+
+	return nextCount === 1 ? base : `${base}-${nextCount}`;
+}
+
+function slugifyHeading(value: string) {
+	return value
+		.trim()
+		.toLowerCase()
+		.replace(/<[^>]+>/g, "")
+		.replace(/&[a-z0-9#]+;/gi, "")
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "");
+}
+
+function prefixFragmentIds(html: string, prefix: string) {
+	return html
+		.replace(/\sid="([^"]+)"/g, ` id="${escapeHtml(prefix)}-$1"`)
+		.replace(/href="#([^"]+)"/g, `href="#${escapeHtml(prefix)}-$1"`);
 }
