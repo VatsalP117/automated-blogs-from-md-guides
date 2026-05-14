@@ -9,12 +9,15 @@ interface Props {
 const { item } = Astro.props;
 ---
 
-<div class="entry-list">
+<div class="chapter-list">
 	{item.entries.map((entry) => (
-		<a href={withBase(`${item.collectionRoute}/${item.slug}/${entry.slug}/`)}>
-			<span class="entry-index">Part {entry.order}</span>
-			<strong>{entry.title}</strong>
-			<span class="muted">{entry.description}</span>
+		<a
+			class="chapter-row"
+			href={withBase(`${item.collectionRoute}/${item.slug}/${entry.slug}/`)}
+		>
+			<span class="chapter-num">{entry.order}</span>
+			<span class="chapter-title">{entry.title}</span>
+			<span class="chapter-time">{entry.readingMinutes} min</span>
 		</a>
 	))}
 </div>

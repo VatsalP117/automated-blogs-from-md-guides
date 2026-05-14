@@ -41,55 +41,50 @@ const nextEntry = currentIndex < item.entries.length - 1 ? item.entries[currentI
 ---
 
 <Layout title={`${item.title}: ${entry.title}`} description={entry.description}>
-	<div class="route-shell">
-		<Breadcrumbs
-			items={[
-				{ label: "Home", href: withBase() },
-				{ label: collection.title, href: withBase(`${collection.route}/`) },
-				{ label: item.title, href: withBase(`${collection.route}/${item.slug}/`) },
-				{ label: entry.title },
-			]}
-		/>
+	<Breadcrumbs
+		items={[
+			{ label: "Home", href: withBase() },
+			{ label: collection.title, href: withBase(`${collection.route}/`) },
+			{ label: item.title, href: withBase(`${collection.route}/${item.slug}/`) },
+			{ label: entry.title },
+		]}
+	/>
 
-		<section class="panel hero-panel">
-			<span class="eyebrow">Part {entry.order}</span>
-			<h1>{entry.title}</h1>
-			<p class="lead">{entry.description}</p>
-			<div class="meta-row">
-				<span class="badge badge--accent">{item.title}</span>
-				<span class="badge">{entry.readingMinutes} min read</span>
-				<span class="badge">{item.entries.length} total parts</span>
-			</div>
-		</section>
-
-		<section class="panel hero-panel">
-			<div
-				class="prose"
-				data-note-scope
-				data-note-page={`${collection.route}/${item.slug}/${entry.slug}`}
-				set:html={entry.html}
-			/>
-		</section>
-
-		<section class="nav-links">
-			{previousEntry ? (
-				<a href={withBase(`${collection.route}/${item.slug}/${previousEntry.slug}/`)}>
-					<div class="muted">Previous</div>
-					<strong>{previousEntry.title}</strong>
-				</a>
-			) : (
-				<div />
-			)}
-			{nextEntry ? (
-				<a href={withBase(`${collection.route}/${item.slug}/${nextEntry.slug}/`)}>
-					<div class="muted">Next</div>
-					<strong>{nextEntry.title}</strong>
-				</a>
-			) : (
-				<div />
-			)}
-		</section>
+	<div class="page-header">
+		<h1>{entry.title}</h1>
+		<div class="page-meta">
+			<span>Part {entry.order} of {item.entries.length}</span>
+			<span>{entry.readingMinutes} min read</span>
+		</div>
 	</div>
+
+	<article>
+		<div
+			class="prose"
+			data-note-scope
+			data-note-page={`${collection.route}/${item.slug}/${entry.slug}`}
+			set:html={entry.html}
+		/>
+	</article>
+
+	<nav class="nav-links">
+		{previousEntry ? (
+			<a href={withBase(`${collection.route}/${item.slug}/${previousEntry.slug}/`)}>
+				<span class="nav-label">← Previous</span>
+				<strong>{previousEntry.title}</strong>
+			</a>
+		) : (
+			<div class="nav-spacer" />
+		)}
+		{nextEntry ? (
+			<a href={withBase(`${collection.route}/${item.slug}/${nextEntry.slug}/`)}>
+				<span class="nav-label">Next →</span>
+				<strong>{nextEntry.title}</strong>
+			</a>
+		) : (
+			<div class="nav-spacer" />
+		)}
+	</nav>
 
 	<SectionNotes />
 </Layout>

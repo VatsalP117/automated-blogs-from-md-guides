@@ -7,16 +7,11 @@ interface Props {
 	linkLabel?: string;
 }
 
-const { href, title, description, badges, linkLabel = "Open" } = Astro.props;
+const { href, title, badges } = Astro.props;
+const metaText = badges.filter(Boolean).join(" · ");
 ---
 
-<a class="card" href={href}>
-	<div class="badge-row">
-		{badges.map((badge, index) => (
-			<span class:list={["badge", index === 0 && "badge--accent"]}>{badge}</span>
-		))}
-	</div>
-	<h3>{title}</h3>
-	<p>{description}</p>
-	<span class="card-link">{linkLabel} ↗</span>
+<a class="item-row" href={href}>
+	<span class="item-row-title">{title}</span>
+	<span class="item-row-meta">{metaText}</span>
 </a>

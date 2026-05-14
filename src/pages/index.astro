@@ -1,6 +1,7 @@
 ---
 import CollectionCard from '@/components/CollectionCard.astro';
 import { loadSiteContent } from '@/lib/content/load-site';
+import { siteConfig } from '@/lib/config';
 import { withBase } from '@/lib/paths';
 import Layout from '@/layouts/Layout.astro';
 
@@ -8,40 +9,27 @@ const site = await loadSiteContent();
 ---
 
 <Layout>
-	<section class="panel hero-panel">
-		<span class="eyebrow">{site.site.heroEyebrow}</span>
-		<h1>{site.site.heroTitle}</h1>
-		<p class="lead">{site.site.heroDescription}</p>
-		<div class="meta-row">
-			<span class="badge badge--accent">Direct-deploy ready</span>
-			<span class="badge">Merged articles or series pages</span>
-			<span class="badge">Config-driven repo discovery</span>
-		</div>
-	</section>
+	<div class="page-header">
+		<h1>{siteConfig.site.title}</h1>
+		<p>{site.site.heroDescription}</p>
+	</div>
 
-	<section class="stack" style="margin-top: 28px;">
-		<div>
-			<span class="eyebrow">Collections</span>
-			<h2 style="margin-top: 12px;">Everything is a collection with an output mode.</h2>
-			<p class="lead">
-				Start with sequential guide folders today. The ingestion layer already supports single-file
-				items and collection-level routing, so adding notes, changelogs, or case studies later is
-				a content-model change instead of a site rewrite.
-			</p>
-		</div>
-		<div class="section-grid">
-			{site.collections.map((collection) => (
-				<CollectionCard
-					href={withBase(`${collection.route}/`)}
-					title={collection.title}
-					description={collection.description}
-					badges={[
-						`${collection.itemCount} item${collection.itemCount === 1 ? '' : 's'}`,
-						`${collection.entryCount} source file${collection.entryCount === 1 ? '' : 's'}`,
-						collection.defaultViewMode,
-					]}
-				/>
-			))}
-		</div>
-	</section>
+	{site.collections.map((collection) => (
+		<section style="margin-top: 40px;">
+			<p class="section-label">{collection.title}</p>
+			<div class="item-list">
+				{collection.items.map((item) => (
+					<CollectionCard
+						href={withBase(`${collection.route}/${item.slug}/`)}
+						title={item.title}
+						description={item.description}
+						badges={[
+							`${item.entries.length} part${item.entries.length === 1 ? '' : 's'}`,
+							`${item.readingMinutes} min read`,
+						]}
+					/>
+				))}
+			</div>
+		</section>
+	))}
 </Layout>

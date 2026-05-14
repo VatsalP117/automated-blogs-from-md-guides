@@ -23,38 +23,28 @@ const { collection } = Astro.props as { collection: ContentCollection };
 ---
 
 <Layout title={collection.title} description={collection.description}>
-	<div class="route-shell">
-		<Breadcrumbs items={[{ label: "Home", href: withBase() }, { label: collection.title }]} />
+	<Breadcrumbs items={[{ label: "Home", href: withBase() }, { label: collection.title }]} />
 
-		<section class="panel hero-panel">
-			<span class="eyebrow">{collection.typeLabel} collection</span>
-			<h1>{collection.title}</h1>
-			<p class="lead">{collection.description}</p>
-			<div class="meta-row">
-				<span class="badge badge--accent">
-					{collection.itemCount} item{collection.itemCount === 1 ? "" : "s"}
-				</span>
-				<span class="badge">
-					{collection.entryCount} source file{collection.entryCount === 1 ? "" : "s"}
-				</span>
-				<span class="badge">{collection.defaultViewMode}</span>
-			</div>
-		</section>
+	<div class="page-header">
+		<h1>{collection.title}</h1>
+		<p>{collection.description}</p>
+		<div class="page-meta">
+			<span>{collection.itemCount} item{collection.itemCount === 1 ? "" : "s"}</span>
+			<span>{collection.entryCount} source file{collection.entryCount === 1 ? "" : "s"}</span>
+		</div>
+	</div>
 
-		<section class="section-grid">
-			{collection.items.map((item) => (
-				<CollectionCard
-					href={withBase(`${collection.route}/${item.slug}/`)}
-					title={item.title}
-					description={item.description}
-					badges={[
-						item.viewMode,
-						`${item.entries.length} part${item.entries.length === 1 ? "" : "s"}`,
-						`${item.readingMinutes} min read`,
-					]}
-					linkLabel="Open item"
-				/>
-			))}
-		</section>
+	<div class="item-list">
+		{collection.items.map((item) => (
+			<CollectionCard
+				href={withBase(`${collection.route}/${item.slug}/`)}
+				title={item.title}
+				description={item.description}
+				badges={[
+					`${item.entries.length} part${item.entries.length === 1 ? "" : "s"}`,
+					`${item.readingMinutes} min read`,
+				]}
+			/>
+		))}
 	</div>
 </Layout>

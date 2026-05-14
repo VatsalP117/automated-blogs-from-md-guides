@@ -31,59 +31,47 @@ const { collection, item } = Astro.props as {
 ---
 
 <Layout title={item.title} description={item.description}>
-	<div class="route-shell">
-		<Breadcrumbs
-			items={[
-				{ label: "Home", href: withBase() },
-				{ label: collection.title, href: withBase(`${collection.route}/`) },
-				{ label: item.title },
-			]}
-		/>
+	<Breadcrumbs
+		items={[
+			{ label: "Home", href: withBase() },
+			{ label: collection.title, href: withBase(`${collection.route}/`) },
+			{ label: item.title },
+		]}
+	/>
 
-		<section class="panel hero-panel">
-			<span class="eyebrow">{item.typeLabel}</span>
-			<h1>{item.title}</h1>
-			<p class="lead">{item.description}</p>
-			<div class="meta-row">
-				<span class="badge badge--accent">{item.viewMode}</span>
-				<span class="badge">
-					{item.entries.length} part{item.entries.length === 1 ? "" : "s"}
-				</span>
-				<span class="badge">{item.readingMinutes} min read</span>
-			</div>
-		</section>
-
-		{item.overviewHtml && (
-			<section class="panel hero-panel">
-				<div class="prose" set:html={item.overviewHtml} />
-			</section>
-		)}
-
-		{item.viewMode !== "merged" && (
-			<section class="panel hero-panel">
-				<div style="margin-bottom: 20px;">
-					<span class="eyebrow">Series view</span>
-					<h2 style="margin-top: 12px;">Read it chapter by chapter.</h2>
-				</div>
-				<EntryList item={item} />
-			</section>
-		)}
-
-		{item.viewMode !== "series" && (
-			<section class="panel hero-panel">
-				<div style="margin-bottom: 20px;">
-					<span class="eyebrow">Merged article</span>
-					<h2 style="margin-top: 12px;">Read the whole item in one pass.</h2>
-				</div>
-				<div
-					class="prose merged-stack"
-					data-note-scope
-					data-note-page={`${collection.route}/${item.slug}`}
-					set:html={item.mergedHtml}
-				/>
-			</section>
-		)}
+	<div class="page-header">
+		<h1>{item.title}</h1>
+		<p>{item.description}</p>
+		<div class="page-meta">
+			<span>{item.entries.length} part{item.entries.length === 1 ? "" : "s"}</span>
+			<span>{item.readingMinutes} min read</span>
+		</div>
 	</div>
+
+	{item.overviewHtml && (
+		<section style="margin-bottom: 40px;">
+			<div class="prose" set:html={item.overviewHtml} />
+		</section>
+	)}
+
+	{item.viewMode !== "merged" && (
+		<section style="margin-bottom: 40px;">
+			<p class="section-label">Chapters</p>
+			<EntryList item={item} />
+		</section>
+	)}
+
+	{item.viewMode !== "series" && (
+		<section>
+			<p class="section-label">Full article</p>
+			<div
+				class="prose merged-stack"
+				data-note-scope
+				data-note-page={`${collection.route}/${item.slug}`}
+				set:html={item.mergedHtml}
+			/>
+		</section>
+	)}
 
 	<SectionNotes />
 </Layout>
