@@ -32,17 +32,17 @@
 		width: 36px;
 		height: 36px;
 		padding: 0;
-		border: 1px solid var(--border);
+		border: 1px solid var(--text-tertiary);
 		border-radius: 8px;
 		background: transparent;
-		color: var(--text-secondary);
+		color: var(--text);
 		cursor: pointer;
 		transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
 	}
 
 	.theme-toggle:hover {
-		color: var(--text);
-		border-color: var(--text-tertiary);
+		color: var(--accent);
+		border-color: var(--text-secondary);
 		background: var(--code-bg);
 	}
 
@@ -50,9 +50,9 @@
 		display: none;
 	}
 
-	/* Show sun when in light mode, moon when in dark mode */
-	:root:not([data-theme="dark"]) .theme-toggle__icon--sun,
-	[data-theme="dark"] .theme-toggle__icon--moon {
+	/* Show target state: moon in light mode, sun in dark mode */
+	:root:not([data-theme="dark"]) .theme-toggle__icon--moon,
+	[data-theme="dark"] .theme-toggle__icon--sun {
 		display: block;
 	}
 </style>
