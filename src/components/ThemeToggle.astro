@@ -51,8 +51,8 @@
 	}
 
 	/* Show target state: moon in light mode, sun in dark mode */
-	:root:not([data-theme="dark"]) .theme-toggle__icon--moon,
-	[data-theme="dark"] .theme-toggle__icon--sun {
+	:global(:root:not([data-theme="dark"])) .theme-toggle__icon--moon,
+	:global([data-theme="dark"]) .theme-toggle__icon--sun {
 		display: block;
 	}
 </style>
