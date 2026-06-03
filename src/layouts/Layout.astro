@@ -1,6 +1,7 @@
 ---
 import { siteConfig } from '@/lib/config';
 import { withBase } from '@/lib/paths';
+import ThemeToggle from '@/components/ThemeToggle.astro';
 
 interface Props {
 	title?: string;
@@ -22,16 +23,27 @@ const homeHref = withBase();
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content={description} />
 		<title>{documentTitle}</title>
+		<script is:inline>
+			(function () {
+				const saved = localStorage.getItem('theme');
+				const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+				const theme = saved || (prefersDark ? 'dark' : 'light');
+				if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+			})();
+		</script>
 	</head>
 	<body>
 		<div class="site-shell">
 			<header class="site-header">
 				<a class="site-name" href={homeHref}>{siteConfig.site.title}</a>
-				<nav class="site-nav">
-					{siteConfig.collections.map((collection) => (
-						<a href={withBase(`${collection.route}/`)}>{collection.title}</a>
-					))}
-				</nav>
+				<div class="header-actions">
+					<nav class="site-nav">
+						{siteConfig.collections.map((collection) => (
+							<a href={withBase(`${collection.route}/`)}>{collection.title}</a>
+						))}
+					</nav>
+					<ThemeToggle />
+				</div>
 			</header>
 			<main class="page-content">
 				<slot />
@@ -63,12 +75,30 @@ const homeHref = withBase();
 		--accent-hover: #2c5060;
 		--code-bg: #f0f0f0;
 		--code-border: #ddd;
+		--pre-bg: #1e1e1e;
+		--pre-border: #333;
+		--pre-text: #d4d4d4;
 		--reading-width: 680px;
 		--page-width: 780px;
 		--font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 			"Helvetica Neue", Arial, sans-serif;
 		--font-mono: "SFMono-Regular", "SF Mono", Menlo, Consolas,
 			"Liberation Mono", monospace;
+	}
+
+	[data-theme="dark"] {
+		--bg: #0d0d0d;
+		--text: #e8e8e8;
+		--text-secondary: #a0a0a0;
+		--text-tertiary: #707070;
+		--border: #2a2a2a;
+		--accent: #6b9eb3;
+		--accent-hover: #8ab4c5;
+		--code-bg: #1a1a1a;
+		--code-border: #2a2a2a;
+		--pre-bg: #1e1e1e;
+		--pre-border: #333;
+		--pre-text: #d4d4d4;
 	}
 
 	html {
@@ -126,6 +156,12 @@ const homeHref = withBase();
 	.site-name:hover {
 		text-decoration: none;
 		color: var(--text-secondary);
+	}
+
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: 16px;
 	}
 
 	.site-nav {
@@ -255,7 +291,7 @@ const homeHref = withBase();
 
 	.item-row:hover {
 		text-decoration: none;
-		background: rgba(0, 0, 0, 0.015);
+		background: var(--code-bg);
 	}
 
 	.item-row-title {
@@ -298,7 +334,7 @@ const homeHref = withBase();
 
 	.chapter-row:hover {
 		text-decoration: none;
-		background: rgba(0, 0, 0, 0.015);
+		background: var(--code-bg);
 	}
 
 	.chapter-num {
@@ -408,15 +444,15 @@ const homeHref = withBase();
 		overflow-x: auto;
 		padding: 16px 20px;
 		border-radius: 6px;
-		background: #1e1e1e;
-		border: 1px solid #333;
+		background: var(--pre-bg);
+		border: 1px solid var(--pre-border);
 		margin-top: 1.25em;
 	}
 
 	.prose pre code {
 		padding: 0;
 		background: transparent;
-		color: #d4d4d4;
+		color: var(--pre-text);
 		font-size: 13px;
 		line-height: 1.6;
 	}
