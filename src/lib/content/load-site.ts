@@ -310,12 +310,32 @@ function stripMarkdown(content: string) {
 }
 
 function estimateReadingTime(content: string) {
-	const words = stripMarkdown(content)
+	// Extract fenced code blocks and count their words separately
+	const codeBlockRegex = /```[\s\S]*?```/g;
+	const codeBlocks: string[] = [];
+	let match;
+	while ((match = codeBlockRegex.exec(content)) !== null) {
+		codeBlocks.push(match[0]);
+	}
+
+	let proseContent = content;
+	let codeWords = 0;
+	for (const block of codeBlocks) {
+		const code = block.replace(/^```.*\n/, "").replace(/\n```$/, "");
+		codeWords += code.trim().split(/\s+/).filter(Boolean).length;
+		proseContent = proseContent.replace(block, " ");
+	}
+
+	const proseWords = stripMarkdown(proseContent)
 		.trim()
 		.split(/\s+/)
 		.filter(Boolean).length;
 
-	return Math.max(1, Math.ceil(words / 220));
+	// Prose at 220 WPM, code at 100 WPM (technical content is slower to read)
+	const proseMinutes = Math.ceil(proseWords / 220);
+	const codeMinutes = Math.ceil(codeWords / 100);
+
+	return Math.max(1, proseMinutes + codeMinutes);
 }
 
 function inferFilenameOrder(fileName: string) {
